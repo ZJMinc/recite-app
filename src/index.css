@@ -1,0 +1,116 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-paper: #f7f4ee;
+  --color-surface: #fffdf9;
+  --color-ink: #211e19;
+  --color-ink-soft: #4a453c;
+  --color-muted: #827b6d;
+  --color-line: #e8e2d6;
+  --color-accent: #2e6b58;
+  --color-accent-ink: #1d4a3b;
+  --color-accent-soft: #e3efe8;
+  --color-gold: #b07d33;
+  --color-gold-soft: #f7edda;
+  --color-rose: #a94f3f;
+  --color-rose-soft: #f8e7e2;
+  --color-sky: #40698c;
+  --color-sky-soft: #e6eef5;
+
+  --font-sans:
+    'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', system-ui, -apple-system,
+    sans-serif;
+  --font-serif:
+    'Songti SC', 'Noto Serif SC', 'STSong', 'SimSun', Georgia, serif;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior-y: none;
+  }
+
+  button {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  input,
+  select {
+    font-family: inherit;
+  }
+}
+
+/* 挖空：未揭晓时用同宽透明字占位，揭晓后高亮 */
+.cloze-blank {
+  color: transparent;
+  background: #e9e3d5;
+  border-radius: 4px;
+  padding: 0 2px;
+  user-select: none;
+  box-shadow: inset 0 -2px 0 #d8d0bf;
+}
+
+.cloze-answer {
+  color: inherit;
+  background: #fbe9b7;
+  border-radius: 4px;
+  padding: 0 3px;
+  box-shadow: inset 0 -2px 0 #ecd08f;
+  font-weight: 600;
+}
+
+/* 卡片正文：宋体更有"背书"的味道 */
+.card-body {
+  font-family: var(--font-serif);
+  line-height: 1.95;
+  letter-spacing: 0.01em;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.96);
+  }
+  60% {
+    transform: scale(1.015);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-rise {
+  animation: rise 0.3s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+.animate-pop {
+  animation: pop 0.32s ease-out both;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
