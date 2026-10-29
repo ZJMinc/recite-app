@@ -4,6 +4,10 @@
 
 **核心思路**：把知识点拆成「能独立回忆的最小单元」，用主动回忆 + FSRS 间隔重复 + 挖空/口诀/易混辨析把它焊进长期记忆。
 
+> **在线使用**：<https://zjminc.github.io/recite-app/>
+>
+> [![Deploy to GitHub Pages](https://github.com/ZJMinc/recite-app/actions/workflows/deploy.yml/badge.svg)](https://github.com/ZJMinc/recite-app/actions/workflows/deploy.yml)
+
 ## 界面
 
 | 今日 | 背诵 |
@@ -100,3 +104,7 @@ node scripts/backup.mjs        # 导出 / 重置 / 导入
 - [ ] M3 输出式记忆：简答默写、要点覆盖率打分、学习计划倒推
 - [ ] M4 打磨：暗色模式、TTS 听背、内容批量导入
 - [ ] M5 扩内容：目标 1500–3000 张
+
+## License
+
+[MIT](LICENSE) © ZJMinc
