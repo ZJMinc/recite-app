@@ -4,6 +4,16 @@
 
 **核心思路**：把知识点拆成「能独立回忆的最小单元」，用主动回忆 + FSRS 间隔重复 + 挖空/口诀/易混辨析把它焊进长期记忆。
 
+## 界面
+
+| 今日 | 背诵 |
+|---|---|
+| ![今日](docs/screenshots/home.png) | ![背诵](docs/screenshots/review.png) |
+
+| 知识树 | 统计 |
+|---|---|
+| ![知识树](docs/screenshots/browse.png) | ![统计](docs/screenshots/stats.png) |
+
 ## 快速开始
 
 ```bash
