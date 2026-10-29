@@ -186,6 +186,11 @@ export function Today() {
                 </li>
               )
             })}
+            {chapterCounts.size > plan.length ? (
+              <li className="pl-3.5 text-[11px] text-muted">
+                还有 {chapterCounts.size - plan.length} 个章节…
+              </li>
+            ) : null}
           </ul>
         </section>
       ) : null}

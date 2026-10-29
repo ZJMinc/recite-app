@@ -1,0 +1,11 @@
+import { chromium } from 'playwright'
+const b = await chromium.launch({ channel: 'chrome', headless: true })
+const c = await b.newContext({ viewport: { width: 1280, height: 900 }, deviceScaleFactor: 1.5 })
+const p = await c.newPage()
+await p.goto('http://127.0.0.1:4173/', { waitUntil: 'networkidle' })
+await p.waitForTimeout(600)
+await p.screenshot({ path: '/tmp/shots/11-desktop-home.png' })
+await p.getByRole('button', { name: /开始背诵/ }).click()
+await p.waitForTimeout(600)
+await p.screenshot({ path: '/tmp/shots/12-desktop-review.png' })
+await b.close()
