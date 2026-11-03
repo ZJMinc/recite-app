@@ -5,6 +5,7 @@ import { Icon, type IconName } from './Icon'
 const NAV: { to: string; label: string; icon: IconName }[] = [
   { to: '/', label: '今日', icon: 'today' },
   { to: '/review', label: '背诵', icon: 'review' },
+  { to: '/quiz', label: '刷题', icon: 'target' },
   { to: '/browse', label: '知识', icon: 'browse' },
   { to: '/stats', label: '统计', icon: 'stats' },
   { to: '/settings', label: '设置', icon: 'settings' },

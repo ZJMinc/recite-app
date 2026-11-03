@@ -8,11 +8,22 @@ export interface SyncMetaRecord {
   value: string
 }
 
+/** 错题本记录。只在本地，不参与同步（错题是做题历史，跨端合并意义不大） */
+export interface WrongRecord {
+  cardId: string
+  wrongCount: number
+  /** 连续答对次数，达到阈值后移出错题本 */
+  correctStreak: number
+  lastWrongAt: number
+  lastAnsweredAt: number
+}
+
 class AppDB extends Dexie {
   cards!: Table<CardRecord, string>
   reviews!: Table<ReviewRecord, number>
   daily!: Table<DailyRecord, string>
   syncMeta!: Table<SyncMetaRecord, string>
+  wrongs!: Table<WrongRecord, string>
 
   constructor() {
     super('jiaojibei')
@@ -27,6 +38,14 @@ class AppDB extends Dexie {
       reviews: '++id, cardId, at',
       daily: 'date',
       syncMeta: 'key',
+    })
+    // v3：M2 刷题错题本
+    this.version(3).stores({
+      cards: 'id, subjectId, chapterId, due, state, type, last_review',
+      reviews: '++id, cardId, at',
+      daily: 'date',
+      syncMeta: 'key',
+      wrongs: 'cardId, wrongCount',
     })
   }
 }
