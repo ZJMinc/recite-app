@@ -29,6 +29,23 @@ pnpm preview    # 预览生产构建
 
 纯静态站点，`dist/` 丢到任意静态托管（Vercel / Netlify / Cloudflare Pages）即可，无需后端。路由用 hash（`/#/stats`），不需要服务器 rewrite 配置。
 
+## 多端同步（可选）
+
+默认纯本地，不需要任何服务器。想让手机、电脑共用一份进度，可以接一个自建后端：
+
+- **设计取舍** → [`docs/SYNC.md`](docs/SYNC.md)
+- **首次部署**（PocketBase + Tailscale，飞牛OS 为例） → [`deploy/README.md`](deploy/README.md)
+- **备份 / 还原 / 排障 / 升级** → [`docs/OPS.md`](docs/OPS.md)
+
+开启方式：App 里 **设置 → 多端同步** 填地址、邮箱、密码即可。
+
+两个前提条件：后端必须有 **HTTPS**（PWA 的 Service Worker 只在安全上下文注册），
+且客户端能访问到它。Tailscale 组网可以同时满足这两点，不需要公网 IP、不用动路由器端口映射。
+
+同步的语义很简单：复习日志只追加，所以**取并集**即可无冲突合并；每张卡的 FSRS 状态
+按 `last_review` 做 last-write-wins；当日统计从日志重算。**离线仍是真相源**，
+后端只是合并点，挂了也能照常背。
+
 ## 已实现（M1）
 
 | 模块 | 说明 |
@@ -82,10 +99,14 @@ src/
 ├─ components/    Layout、CardBody、RatingBar、Icon
 ├─ lib/           stats.ts 统计与掌握度计算
 ├─ store/         settings.ts（zustand + localStorage）
+├─ sync/          多端同步（可选）：merge 纯合并规则 / client / engine / useSync
 ├─ db.ts          Dexie 表结构、评审事务、备份重置
 ├─ scheduler.ts   FSRS 封装（评分、间隔预览）
 └─ types.ts       数据模型
-scripts/          端到端冒烟测试（playwright）
+scripts/          端到端冒烟测试（playwright）+ 同步合并测试
+pb_migrations/    PocketBase 集合定义（仅当你自建后端时需要）
+deploy/           docker-compose 与部署步骤
+docs/             规划、（同步）设计与运维手册
 ```
 
 ## 测试

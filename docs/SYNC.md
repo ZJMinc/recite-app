@@ -2,6 +2,9 @@
 
 > 目标：多台设备共用一个学习进度，**离线仍然完整可用**。
 > 后端不参与背卡决策，只当合并点。
+>
+> 已部署实例的**备份、还原、排障、升级**见 [`OPS.md`](OPS.md)；首次部署步骤见
+> [`../deploy/README.md`](../deploy/README.md)。
 
 ## 为什么后端可以这么小
 
@@ -57,20 +60,29 @@ src/sync/
 
 `SyncRuntime` 已挂在 `Layout` 里；**没配置后端时是彻底的 no-op**，不影响现有单机行为。
 
-## 配置（当前无 UI，用控制台一行搞定）
+## 配置
 
-```js
-localStorage.setItem('jiaojibei:sync-config', JSON.stringify({
-  baseUrl: 'https://nas.<your-tailnet>.ts.net',
-  email: 'you@example.com',
-  password: '你的密码',
-}))
-// 刷新页面后自动开始同步
+在 App 里 **设置 → 多端同步** 填三栏并点「连接并同步」即可：
+
+| 栏位 | 填什么 |
+|---|---|
+| 地址 | 只填协议 + 域名，例如 `https://nas.<your-tailnet>.ts.net`（**不要带 `/api`、`/_/` 或端口**） |
+| 邮箱 | `users` 集合里那个应用账号 |
+| 密码 | 同上 |
+
+预填值走构建期环境变量，本地放 `.env.local`（已被 `.gitignore` 覆盖），
+这样公开仓库里不会出现个人地址：
+
+```sh
+# .env.local
+VITE_SYNC_BASE_URL=https://nas.<your-tailnet>.ts.net
+VITE_SYNC_EMAIL=you@example.com
 ```
 
-> 注意：密码存在 localStorage 里。单人自用设备可以接受；如果以后要给他人用，应改成「登录一次 → 只存 token」。
+> 没有环境变量时输入框留空，纯手工填。密码只存在于浏览器 `localStorage`，
+> 不写进代码。单人自用设备可以接受；要与他人共用，应改成「登录一次 → 只存 token」。
 
-清空：
+断开同步：设置页点「断开」，或清空浏览器存储：
 
 ```js
 localStorage.removeItem('jiaojibei:sync-config')
@@ -130,12 +142,11 @@ sudo tailscale cert nas.<tailnet>.ts.net
 
 ### 4. 备份
 
-`pb_data/` 是单目录，飞牛定时快照直接覆盖。也可用 PocketBase 自带备份：
+生产上用的是两层：PocketBase 每日自动备份 + systemd 定时器把 zip 复制到另一块物理盘。
+具体路径、命令与还原步骤见 [`OPS.md` 的备份章节](OPS.md#三备份与还原)。
 
-```sh
-curl -X POST https://nas.<tailnet>.ts.net/api/backups \
-  -H "Authorization: <superuser-token>"
-```
+要点：**直接复制 `pb_data/*.db` 是不安全的**（可能拷到半写状态），
+要复制 PocketBase 通过 `/api/backups` 生成的一致性快照 zip。
 
 ## 验证
 
@@ -156,9 +167,10 @@ node node_modules/typescript/bin/tsc -b
 3. **设置用推送时间戳**：双端同时改设置有极小概率互相覆盖。
 4. **内容删除**用 `deleted` 软删标记，不做物理同步。
 5. **未做实时推送**：靠 5 分钟轮询 + 回前台/重连触发，单人场景足够。
+6. **卡片内容仍是打包进 App 的**：服务端 `cards` 集合目前为空，内容更新仍需重新构建部署。
 
 ## 还没做
 
-- 设置页里的「同步」UI（配置、状态、立即同步按钮）——目前靠控制台写 localStorage
-- 冲突的日志重放修复
-- 内容批量导入（从 `src/data/seed.ts` 灌进 `cards` 集合的脚本）
+- 冲突的日志重放修复（上面限制 1）
+- 内容批量导入（`src/data/seed.ts` → `cards` 集合的脚本），做完后改内容就不用重新部署
+- 离线时长（`seconds`）纳入同步

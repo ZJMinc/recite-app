@@ -1,6 +1,7 @@
 # 部署速查（飞牛OS + Tailscale）
 
-完整设计见 [`docs/SYNC.md`](../docs/SYNC.md)。这里只列命令。
+完整设计见 [`docs/SYNC.md`](../docs/SYNC.md)。这里只列首次部署的命令；
+部署完成后的**日常检查、备份还原、故障排查、升级**见 [`docs/OPS.md`](../docs/OPS.md)。
 
 ## 0. 前置
 
