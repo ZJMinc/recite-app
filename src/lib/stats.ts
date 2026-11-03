@@ -58,15 +58,8 @@ export function averageMastery(cards: CardRecord[]): number {
   return cards.reduce((sum, c) => sum + cardMastery(c), 0) / cards.length
 }
 
-export function examCountdown(examDate?: string): number | null {
-  if (!examDate) return null
-  const target = new Date(`${examDate}T00:00:00`)
-  if (Number.isNaN(target.getTime())) return null
-  const now = new Date()
-  now.setHours(0, 0, 0, 0)
-  target.setHours(0, 0, 0, 0)
-  return Math.round((target.getTime() - now.getTime()) / 86_400_000)
-}
+// 实现在 lib/date.ts（纯函数、可单测），这里转出保持原有引用路径不变
+export { examCountdown } from './date'
 
 export function formatDuration(seconds: number): string {
   if (seconds < 60) return `${Math.max(0, Math.round(seconds))} 秒`

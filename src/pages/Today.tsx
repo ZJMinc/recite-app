@@ -4,6 +4,7 @@ import { db } from '../db'
 import { useSettings } from '../store/settings'
 import { Icon } from '../components/Icon'
 import { computeStreak, examCountdown, formatDateCn, isLearned } from '../lib/stats'
+import { computePlan } from '../lib/plan'
 import { CHAPTER_MAP, SUBJECT_MAP } from '../data/curriculum'
 import { ProgressBar } from '../components/ui'
 
@@ -50,6 +51,12 @@ export function Today() {
   const learned = cards.filter(isLearned).length
   const streak = computeStreak(days)
   const countdown = examCountdown(examDate)
+  const studyPlan = computePlan({
+    examDate,
+    totalCards: cards.length,
+    learnedCards: learned,
+    dailyNewLimit,
+  })
   const target = doneToday + pending
   const tip = TIPS[new Date().getDate() % TIPS.length]
 
@@ -133,10 +140,15 @@ export function Today() {
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-soft text-sky">
             <Icon name="target" size={18} />
           </div>
-          <div className="flex-1">
+          <div className="min-w-0 flex-1">
             <p className="text-[13px] text-ink">距离考试</p>
-            <p className="text-[11px] text-muted">
-              {countdown >= 0 ? '按你的节奏，稳住每天的任务量' : '考试日期已过，记得更新'}
+            <p
+              className={[
+                'mt-0.5 line-clamp-2 text-[11px] leading-snug',
+                studyPlan.status === 'tight' ? 'text-rose' : 'text-muted',
+              ].join(' ')}
+            >
+              {studyPlan.message}
             </p>
           </div>
           <p className="tabular text-[18px] font-semibold text-accent">
@@ -158,6 +170,25 @@ export function Today() {
           <span className="text-muted">新卡节奏</span>
           <span className="text-ink-soft">每天 {dailyNewLimit} 张</span>
         </div>
+      </section>
+
+      <section className="grid grid-cols-2 gap-2">
+        <button
+          type="button"
+          onClick={() => navigate('/quiz')}
+          className="flex items-center justify-center gap-1.5 rounded-2xl border border-line/70 bg-surface py-3 text-[13.5px] text-ink-soft"
+        >
+          <Icon name="target" size={16} />
+          刷题
+        </button>
+        <button
+          type="button"
+          onClick={() => navigate('/recite')}
+          className="flex items-center justify-center gap-1.5 rounded-2xl border border-line/70 bg-surface py-3 text-[13.5px] text-ink-soft"
+        >
+          <Icon name="upload" size={16} />
+          简答默写
+        </button>
       </section>
 
       {plan.length > 0 ? (

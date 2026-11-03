@@ -7,6 +7,7 @@ import { Stats } from './pages/Stats'
 import { Settings } from './pages/Settings'
 import { Quiz } from './pages/Quiz'
 import { Wrongs } from './pages/Wrongs'
+import { Recite } from './pages/Recite'
 
 export function App() {
   return (
@@ -18,6 +19,7 @@ export function App() {
           <Route path="/browse" element={<Browse />} />
           <Route path="/quiz" element={<Quiz />} />
           <Route path="/wrongs" element={<Wrongs />} />
+          <Route path="/recite" element={<Recite />} />
           <Route path="/stats" element={<Stats />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<Today />} />
