@@ -21,7 +21,7 @@ export const CARD_SUBJECTS = [
  * 内置卡片总数。内容变动时由 scripts/import-content.mjs 自动同步。
  * 单独存一个数字，是为了让「关于」这类地方显示数量时不必加载全部内容。
  */
-export const BUILTIN_CARD_COUNT = 761
+export const BUILTIN_CARD_COUNT = 798
 
 /** 按科目加载；未知科目返回空数组 */
 export async function loadCardsForSubject(subjectId: SubjectId): Promise<SeedCard[]> {
