@@ -105,28 +105,33 @@ node scripts/validate-content.mjs
 目前卡片打包进 App，改内容必须重新构建部署。服务端的 `cards` 集合已建好但为空。
 后续计划：把 seed 导入 PocketBase，客户端按 `content_ver` 增量拉取 —— 这样改内容不用重新发版。
 
-## 五、容量与体积（扩容时必须留意）
+## 五、容量与体积（已做按科目拆包）
 
-卡片打包进 JS，随数量线性增长。实测：
+卡片按科目拆在 `src/data/cards/<subject>.ts`，由 `src/data/seed.ts` 动态 `import()`。
+Vite 为每个科目生成独立 chunk，主包不再随内容线性膨胀。
 
-| 卡片数 | JS 体积（gzip） |
+实测（628 张）：
+
+| 产物 | 体积（gzip） |
 |---|---|
-| 203 | 168 KB |
-| 294 | 183 KB |
-| 355 | 190 KB |
-| 438 | 201 KB |
-| 468 | 207 KB |
-| 501 | 209 KB |
-| 529 | 212 KB |
-| 562 | 217 KB |
-| 595 | 221 KB |
-| 628 | 226 KB |
+| 主包 `index-*.js` | 476 KB（148 KB） |
+| `pedagogy` chunk | 82 KB（23 KB） |
+| `edupsy` chunk | 65 KB（19 KB） |
+| `psychology` chunk | 45 KB（14 KB） |
+| `law` chunk | 34 KB（10 KB） |
+| `newcur` / `ethics` | 13 / 12 KB（各 4 KB） |
 
-按这个斜率，扩到 1500 张时 bundle 约 600–700 KB（gzip 200 KB 出头），首屏仍可接受，
-但到 3000 张就该拆分了。届时两个方向：
+拆包前主包是 724 KB（226 KB gzip），拆后降到 476 KB。
 
-1. **按科目动态 import**：`import('./cards/pedagogy')`，只在需要时加载该科目
-2. **内容上云**：把 seed 导入 PocketBase 的 `cards` 集合，客户端按 `content_ver` 增量拉取
-   （集合已建好，缺导入脚本与拉取逻辑）
+**关键设计**：`initDB()` 先读一个种子版本标记（`meta.seedVersion` = 内置卡片总数），
+已播种且数量未变就跳过，**老用户启动时完全不下载内容 chunk**；
+只有首次安装或内容更新才加载。重置学习进度会同时清标记并重新播种。
 
-在触发之前，继续按章节批量补卡即可。
+按此结构扩到 1500 张时，主包基本不变，各科目 chunk 各自增长到 100–200 KB，
+且只在需要时加载。
+
+### 还没做的拆分
+
+- 内容仍随版本发布，改一张卡也要重新部署（后续可走「内容上云」：seed → PocketBase，
+  客户端按 `content_ver` 增量拉）
+- 单科目内部未再细分（如教育学 208 张一个 chunk），到 500+ 时再考虑按章拆

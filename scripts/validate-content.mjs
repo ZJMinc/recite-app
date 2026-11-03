@@ -5,7 +5,7 @@
 // 规则见 scripts/lib/content-rules.mjs（与批量导入共用同一套判定）。
 // 统计信息（题量、题型、章节分布）即使全部通过也会打印。
 
-import { SEED_CARDS } from '../src/data/seed.ts'
+import { SEED_CARDS } from './lib/all-cards.mjs'
 import { CHAPTER_MAP, SUBJECTS } from '../src/data/curriculum.ts'
 import { checkCard, frontKey } from './lib/content-rules.mjs'
 

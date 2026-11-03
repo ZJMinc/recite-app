@@ -102,7 +102,7 @@ pnpm preview    # 预览生产构建
 
 ```
 src/
-├─ data/          curriculum.ts 章节树 / seed.ts 卡片内容
+├─ data/          curriculum.ts 章节树；cards/<科目>.ts 卡片内容（按需动态加载）
 ├─ pages/         Today / Review / Browse / Stats / Settings
 ├─ components/    Layout、CardBody、RatingBar、Icon
 ├─ lib/           stats.ts 统计与掌握度计算

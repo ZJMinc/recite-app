@@ -1,5 +1,5 @@
 import Dexie, { type Table } from 'dexie'
-import { SEED_CARDS } from './data/seed'
+import { BUILTIN_CARD_COUNT, loadAllCards } from './data/seed'
 import type { CardRecord, DailyRecord, ReviewRecord, SeedCard } from './types'
 
 /** 同步水位线与设备标识，见 src/sync/engine.ts */
@@ -68,13 +68,26 @@ export function makeNewCard(seed: SeedCard): CardRecord {
   }
 }
 
-/** 首次启动 / 内容更新时补齐缺失卡片，不动已有学习进度 */
+const SEED_MARKER = 'meta.seedVersion'
+
+/**
+ * 首次启动 / 内容更新时补齐缺失卡片，不动已有学习进度。
+ *
+ * 内容按科目拆成独立 chunk，只有「需要播种」时才加载：
+ * 记一个版本标记（内置卡片总数），已播种过且数量没变就直接跳过，
+ * 老用户完全不用为内容文件付出下载成本。
+ */
 export async function initDB() {
+  const marker = await db.syncMeta.get(SEED_MARKER)
+  if (marker?.value === String(BUILTIN_CARD_COUNT)) return
+
+  const seed = await loadAllCards()
   const existing = new Set(await db.cards.toCollection().primaryKeys())
-  const missing = SEED_CARDS.filter((c) => !existing.has(c.id)).map(makeNewCard)
+  const missing = seed.filter((c) => !existing.has(c.id)).map(makeNewCard)
   if (missing.length > 0) {
     await db.cards.bulkAdd(missing)
   }
+  await db.syncMeta.put({ key: SEED_MARKER, value: String(BUILTIN_CARD_COUNT) })
 }
 
 /** 重置：清空全部学习数据，并重新写入内置内容 */
@@ -84,7 +97,9 @@ export async function resetAll() {
     await db.reviews.clear()
     await db.daily.clear()
   })
-  await db.cards.bulkAdd(SEED_CARDS.map(makeNewCard))
+  const seed = await loadAllCards()
+  await db.cards.bulkAdd(seed.map(makeNewCard))
+  await db.syncMeta.put({ key: SEED_MARKER, value: String(BUILTIN_CARD_COUNT) })
 }
 
 export function todayKey(d: Date = new Date()): string {

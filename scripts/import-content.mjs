@@ -10,7 +10,7 @@
 
 import { readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
-import { SEED_CARDS } from '../src/data/seed.ts'
+import { SEED_CARDS, SUBJECT_FILES } from './lib/all-cards.mjs'
 import { checkCard, frontKey, renderCard } from './lib/content-rules.mjs'
 
 const args = process.argv.slice(2)
@@ -89,17 +89,40 @@ if (!write) {
   process.exit(0)
 }
 
-const seedPath = path.resolve('src/data/seed.ts')
-const source = readFileSync(seedPath, 'utf8')
-const insertAt = source.trimEnd().lastIndexOf('\n]')
-if (insertAt < 0) {
-  console.error('在 src/data/seed.ts 里找不到 SEED_CARDS 的结尾 ]')
-  process.exit(2)
+const written = {}
+for (const card of accepted) {
+  const rel = SUBJECT_FILES[card.subjectId]
+  if (!rel) {
+    console.error(`未知科目 ${card.subjectId}，跳过 ${card.id}`)
+    continue
+  }
+  const filePath = path.resolve(rel)
+  const source = readFileSync(filePath, 'utf8')
+  const insertAt = source.trimEnd().lastIndexOf('\n]')
+  if (insertAt < 0) {
+    console.error(`${rel} 里找不到 CARDS 数组结尾`)
+    process.exit(2)
+  }
+  const block = renderCard(card)
+  writeFileSync(filePath, `${source.slice(0, insertAt)}\n${block}\n]\n`, 'utf8')
+  written[card.subjectId] = (written[card.subjectId] ?? 0) + 1
 }
-writeFileSync(
-  seedPath,
-  `${source.slice(0, insertAt)}\n${block}\n]\n`,
-  'utf8',
+
+// 同步 seed.ts 里的总数常量，避免「关于」页显示旧数字
+const seedPath = path.resolve('src/data/seed.ts')
+const seedSource = readFileSync(seedPath, 'utf8')
+const total = SEED_CARDS.length + Object.values(written).reduce((a, b) => a + b, 0)
+const bumped = seedSource.replace(
+  /export const BUILTIN_CARD_COUNT = \d+/,
+  `export const BUILTIN_CARD_COUNT = ${total}`,
 )
-console.log(`\n✅ 已写入 ${accepted.length} 张卡片到 ${seedPath}`)
+if (bumped === seedSource) {
+  console.warn('⚠ 未能更新 BUILTIN_CARD_COUNT，请手动检查 src/data/seed.ts')
+} else {
+  writeFileSync(seedPath, bumped, 'utf8')
+}
+
+const totalWritten = accepted.length
+console.log(`\n✅ 已写入 ${totalWritten} 张卡片：`, written)
+console.log(`   BUILTIN_CARD_COUNT → ${total}`)
 console.log('   建议接着运行: node scripts/validate-content.mjs')

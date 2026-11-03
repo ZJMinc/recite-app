@@ -3,7 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { db, resetAll, todayKey } from '../db'
 import { useSettings } from '../store/settings'
 import { Icon } from '../components/Icon'
-import { SEED_CARDS } from '../data/seed'
+import { BUILTIN_CARD_COUNT } from '../data/seed'
 import { clearConfig, loadConfig, saveConfig, syncNow } from '../sync'
 import { THEME_OPTIONS } from '../lib/theme'
 import { isSpeechSupported } from '../lib/speech'
@@ -302,7 +302,7 @@ export function Settings() {
         <SectionTitle title="关于" />
         <div className="px-4 pb-4 pt-1">
           <p className="text-[12.5px] leading-relaxed text-ink-soft">
-            教基背诵 v0.1 · 内置 {SEED_CARDS.length} 张精编卡片，覆盖教育学、教育心理学、心理学基础、法规、师德与新课改。
+            教基背诵 v0.1 · 内置 {BUILTIN_CARD_COUNT} 张精编卡片，覆盖教育学、教育心理学、心理学基础、法规、师德与新课改。
           </p>
           <p className="mt-2 text-[11px] leading-relaxed text-muted">
             采用 FSRS 间隔重复算法 + 主动回忆 + 挖空/口诀/易混辨析。默认只存于本机
