@@ -558,4 +558,15 @@ export const CARDS: SeedCard[] = [
     analysis: '师爱不是「喜欢」，而是「为你好并且知道怎么对你好」。',
     importance: 4,
   },
+  {
+    id: 'm1-q13',
+    subjectId: 'ethics',
+    chapterId: 'm1',
+    kp: '师德规范的层次',
+    type: 'qa',
+    front: '师德规范可分为哪几个层次？',
+    back: '① 理想层次：教育信仰与奉献精神\n② 原则层次：六条规范的基本要求\n③ 规则层次：十项准则的具体底线\n④ 三者由高到低，从倡导到禁止\n⑤ 底线不可触碰，理想值得追求',
+    analysis: '用底线要求所有教师，用理想激励优秀教师。',
+    importance: 4,
+  },
 ]

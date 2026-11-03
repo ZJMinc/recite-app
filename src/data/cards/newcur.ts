@@ -574,4 +574,15 @@ export const CARDS: SeedCard[] = [
     analysis: '跨学科不是「几门课凑一起上」，而是围绕问题真正整合。',
     importance: 4,
   },
+  {
+    id: 'c1-q12',
+    subjectId: 'newcur',
+    chapterId: 'c1',
+    kp: '综合实践活动的实施',
+    type: 'qa',
+    front: '综合实践活动如何有效实施？',
+    back: '① 保证课时，纳入课程计划\n② 主题来源于学生生活与真实问题\n③ 强调学生自主探究与实践\n④ 教师指导而非包办\n⑤ 整合校内外资源\n⑥ 注重过程性评价与成果展示',
+    analysis: '综合实践活动的价值在过程，不在「做出一个漂亮成果」。',
+    importance: 4,
+  },
 ]
