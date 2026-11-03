@@ -35,6 +35,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # 内容校验 + 逻辑测试：失败就不部署，避免坏卡片上线
+      - name: Test
+        run: pnpm test
+
       - name: Build
         run: pnpm build
 
