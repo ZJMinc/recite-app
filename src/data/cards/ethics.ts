@@ -547,4 +547,15 @@ export const CARDS: SeedCard[] = [
     analysis: '十项准则是教育部于 2018 年印发的规范性文件，属部门规范性文件而非法条。',
     importance: 3,
   },
+  {
+    id: 'm1-q12',
+    subjectId: 'ethics',
+    chapterId: 'm1',
+    kp: '师爱的特点',
+    type: 'qa',
+    front: '教师的爱有什么特点？',
+    back: '① 目的性：指向学生成长而非个人好恶\n② 科学性：以教育规律为依据，不溺爱\n③ 普遍性：面向全体学生，不偏爱\n④ 无私性：不求回报\n⑤ 严慈相济：爱与要求统一',
+    analysis: '师爱不是「喜欢」，而是「为你好并且知道怎么对你好」。',
+    importance: 4,
+  },
 ]
