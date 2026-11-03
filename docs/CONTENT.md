@@ -117,6 +117,7 @@ node scripts/validate-content.mjs
 | 438 | 201 KB |
 | 468 | 207 KB |
 | 501 | 209 KB |
+| 529 | 212 KB |
 
 按这个斜率，扩到 1500 张时 bundle 约 600–700 KB（gzip 200 KB 出头），首屏仍可接受，
 但到 3000 张就该拆分了。届时两个方向：
