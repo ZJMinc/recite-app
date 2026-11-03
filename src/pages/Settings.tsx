@@ -4,6 +4,12 @@ import { db, resetAll, todayKey } from '../db'
 import { useSettings } from '../store/settings'
 import { Icon } from '../components/Icon'
 import { SEED_CARDS } from '../data/seed'
+import { clearConfig, loadConfig, saveConfig, syncNow } from '../sync'
+
+// 自建后端的默认值，仅用于预填输入框。放在 .env.local（已 gitignore）里，
+// 避免把个人地址写进公开仓库；没有配置时留空，用户在界面上填。
+const DEFAULT_BASE_URL = import.meta.env.VITE_SYNC_BASE_URL ?? ''
+const DEFAULT_EMAIL = import.meta.env.VITE_SYNC_EMAIL ?? ''
 
 const RETENTIONS = [
   { value: 0.85, label: '轻松 85%' },
@@ -228,6 +234,9 @@ export function Settings() {
         </div>
       </section>
 
+      {/* 多端同步 */}
+      <SyncSection />
+
       {/* 关于 */}
       <section className="rounded-2xl border border-line/70 bg-surface">
         <SectionTitle title="关于" />
@@ -236,8 +245,8 @@ export function Settings() {
             教基背诵 v0.1 · 内置 {SEED_CARDS.length} 张精编卡片，覆盖教育学、教育心理学、心理学基础、法规、师德与新课改。
           </p>
           <p className="mt-2 text-[11px] leading-relaxed text-muted">
-            采用 FSRS 间隔重复算法 + 主动回忆 + 挖空/口诀/易混辨析。数据仅存于本机
-            IndexedDB，不上传任何服务器。
+            采用 FSRS 间隔重复算法 + 主动回忆 + 挖空/口诀/易混辨析。默认只存于本机
+            IndexedDB；开启「多端同步」后，学习进度会上传到你自己部署的服务器。
           </p>
         </div>
       </section>
@@ -320,5 +329,134 @@ function Row({
         <Icon name="chevron" size={15} />
       </span>
     </button>
+  )
+}
+
+function SyncSection() {
+  const [initial] = useState(() => loadConfig())
+  const [baseUrl, setBaseUrl] = useState(initial?.baseUrl ?? DEFAULT_BASE_URL)
+  const [email, setEmail] = useState(initial?.email ?? DEFAULT_EMAIL)
+  const [password, setPassword] = useState('')
+  const [connected, setConnected] = useState(initial !== null)
+  const [busy, setBusy] = useState(false)
+  const [message, setMessage] = useState<string | null>(null)
+
+  const connect = async () => {
+    if (!baseUrl.trim() || !email.trim() || !password) {
+      setMessage('服务地址、邮箱、密码都要填')
+      return
+    }
+    setBusy(true)
+    setMessage(null)
+    const config = { baseUrl: baseUrl.trim(), email: email.trim(), password }
+    saveConfig(config)
+    try {
+      const result = await syncNow(config)
+      setConnected(true)
+      setPassword('')
+      setMessage(
+        `已连接 · 推送 ${result.pushedReviews} 条复习、${result.pushedStates} 张状态；拉取 ${result.pulledReviews} 条复习、${result.pulledStates} 张状态`,
+      )
+    } catch (error) {
+      setConnected(false)
+      setMessage(`连接失败：${(error as Error).message}`)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const disconnect = () => {
+    clearConfig()
+    setConnected(false)
+    setPassword('')
+    setMessage('已断开，本机学习数据保留')
+  }
+
+  return (
+    <section className="rounded-2xl border border-line/70 bg-surface">
+      <SectionTitle title="多端同步" />
+      <div className="px-4 pb-4">
+        <p className="text-[11px] leading-relaxed text-muted">
+          连上你自己部署的服务器后，多台设备共用一份进度；离线照常背诵，联网后自动合并。
+        </p>
+        <div className="mt-3 flex flex-col gap-2">
+          <SyncField
+            label="地址"
+            value={baseUrl}
+            onChange={setBaseUrl}
+            placeholder="https://your-host.ts.net"
+          />
+          <SyncField
+            label="邮箱"
+            value={email}
+            onChange={setEmail}
+            placeholder="you@example.com"
+          />
+          <SyncField
+            label="密码"
+            type="password"
+            value={password}
+            onChange={setPassword}
+            placeholder="••••••••"
+          />
+        </div>
+        <div className="mt-3 flex gap-2">
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => void connect()}
+            className="flex-1 rounded-xl bg-accent py-2 text-[13px] text-white disabled:opacity-60"
+          >
+            {busy ? '连接中…' : connected ? '保存并同步' : '连接并同步'}
+          </button>
+          {connected ? (
+            <button
+              type="button"
+              onClick={disconnect}
+              className="rounded-xl border border-line px-3 py-2 text-[13px] text-ink-soft"
+            >
+              断开
+            </button>
+          ) : null}
+        </div>
+        {message ? (
+          <p className="mt-2 text-[11.5px] leading-relaxed text-ink-soft">{message}</p>
+        ) : connected ? (
+          <p className="mt-2 text-[11.5px] text-muted">
+            已连接，后台每 5 分钟自动同步一次
+          </p>
+        ) : null}
+      </div>
+    </section>
+  )
+}
+
+function SyncField({
+  label,
+  value,
+  onChange,
+  placeholder,
+  type = 'text',
+}: {
+  label: string
+  value: string
+  onChange: (value: string) => void
+  placeholder?: string
+  type?: 'text' | 'password'
+}) {
+  return (
+    <label className="flex items-center gap-2">
+      <span className="w-9 shrink-0 text-[12px] text-muted">{label}</span>
+      <input
+        type={type}
+        value={value}
+        placeholder={placeholder}
+        autoCapitalize="off"
+        autoCorrect="off"
+        spellCheck={false}
+        onChange={(e) => onChange(e.target.value)}
+        className="min-w-0 flex-1 rounded-lg border border-line bg-paper px-2.5 py-1.5 text-[13px] text-ink-soft outline-none"
+      />
+    </label>
   )
 }

@@ -2,10 +2,17 @@ import Dexie, { type Table } from 'dexie'
 import { SEED_CARDS } from './data/seed'
 import type { CardRecord, DailyRecord, ReviewRecord, SeedCard } from './types'
 
+/** 同步水位线与设备标识，见 src/sync/engine.ts */
+export interface SyncMetaRecord {
+  key: string
+  value: string
+}
+
 class AppDB extends Dexie {
   cards!: Table<CardRecord, string>
   reviews!: Table<ReviewRecord, number>
   daily!: Table<DailyRecord, string>
+  syncMeta!: Table<SyncMetaRecord, string>
 
   constructor() {
     super('jiaojibei')
@@ -13,6 +20,13 @@ class AppDB extends Dexie {
       cards: 'id, subjectId, chapterId, due, state, type',
       reviews: '++id, cardId, at',
       daily: 'date',
+    })
+    // v2：为同步加 last_review 索引（状态推送水位线）与游标表
+    this.version(2).stores({
+      cards: 'id, subjectId, chapterId, due, state, type, last_review',
+      reviews: '++id, cardId, at',
+      daily: 'date',
+      syncMeta: 'key',
     })
   }
 }

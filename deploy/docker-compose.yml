@@ -1,0 +1,26 @@
+# 飞牛OS 上的 PocketBase 同步后端
+#
+# 放到 NAS 上任意持久目录，例如 /vol1/1000/apps/recite/
+# 目录结构：
+#   recite/
+#   ├─ docker-compose.yml   ← 本文件
+#   ├─ pb_migrations/       ← 从仓库复制
+#   └─ pb_data/             ← 自动生成，备份就备这个目录
+
+services:
+  pocketbase:
+    image: ghcr.io/muchobien/pocketbase:0.40.6
+    container_name: recite-pocketbase
+    restart: unless-stopped
+    # 只绑回环：外面一律走 Tailscale，绝不直接暴露到 LAN
+    ports:
+      - "127.0.0.1:8090:8090"
+    volumes:
+      - ./pb_data:/pb_data
+      - ./pb_migrations:/pb_migrations
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8090/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s

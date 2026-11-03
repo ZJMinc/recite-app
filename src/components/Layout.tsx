@@ -1,4 +1,5 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { SyncRuntime } from '../sync'
 import { Icon, type IconName } from './Icon'
 
 const NAV: { to: string; label: string; icon: IconName }[] = [
@@ -54,6 +55,7 @@ export function Layout() {
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-[600px] flex-col">
+      <SyncRuntime />
       <main
         className={
           focusMode
