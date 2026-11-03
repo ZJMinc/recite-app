@@ -67,6 +67,8 @@ pnpm preview    # 预览生产构建
 
 所有卡片在 [`src/data/seed.ts`](src/data/seed.ts)，章节树在 [`src/data/curriculum.ts`](src/data/curriculum.ts)。
 
+批量导入（JSON → 校验 → 追加）与质量闸门的完整说明见 [`docs/CONTENT.md`](docs/CONTENT.md)。
+
 ```ts
 {
   id: 'p6-11',              // 唯一 id，按「章节-序号」命名
