@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "test": "node scripts/content-rules.mjs && node scripts/validate-content.mjs && node scripts/sync-merge.mjs && node scripts/quiz-core.mjs && node scripts/recite-core.mjs && node scripts/plan-core.mjs && node scripts/theme-speech.mjs",
     "content:check": "node scripts/validate-content.mjs",
-    "content:import": "node scripts/import-content.mjs"
+    "content:import": "node scripts/import-content.mjs",
+    "content:audit": "node scripts/audit-content.mjs"
   },
   "dependencies": {
     "dexie": "^4.4.7",
