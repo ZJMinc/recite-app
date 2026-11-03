@@ -504,4 +504,15 @@ export const CARDS: SeedCard[] = [
     analysis: '作业改革的方向是「减量提质」，不是简单取消。',
     importance: 4,
   },
+  {
+    id: 'c2-q9',
+    subjectId: 'newcur',
+    chapterId: 'c2',
+    kp: '双减与教育质量',
+    type: 'qa',
+    front: '双减如何做到「减负不减质」？',
+    back: '① 提高课堂教学质量，让学生在校内学足学好\n② 优化作业设计，减量提质\n③ 提升课后服务水平，满足多样需求\n④ 加强教师队伍建设\n⑤ 改革评价方式，破除唯分数\n⑥ 规范校外培训秩序',
+    analysis: '双减的关键不在「减法」，而在校内质量的「加法」。',
+    importance: 5,
+  },
 ]
