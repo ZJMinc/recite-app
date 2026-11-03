@@ -49,6 +49,11 @@ export function checkCard(card) {
     )
   }
 
+  // id 前缀必须与章节一致：避免不同章节用重名编号，也便于人工定位
+  if (card.id && card.chapterId && !String(card.id).startsWith(`${card.chapterId}-`)) {
+    errors.push(`${id}: id 前缀应与章节 ${card.chapterId} 一致（如 ${card.chapterId}-q1）`)
+  }
+
   const importance = card.importance
   if (!Number.isInteger(importance) || importance < 1 || importance > 5) {
     errors.push(`${id}: importance 必须是 1..5 的整数，实际 ${importance}`)

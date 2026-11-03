@@ -66,6 +66,16 @@ test('章节与科目不匹配被发现', () => {
   assert.ok(r.errors.some((e) => e.includes('不一致')))
 })
 
+test('id 前缀与章节不一致被发现', () => {
+  const r = checkCard({ ...base, id: 'p2-q1', chapterId: 'p3' })
+  assert.ok(r.errors.some((e) => e.includes('id 前缀应与章节')))
+})
+
+test('id 前缀与章节一致时不报错', () => {
+  const r = checkCard({ ...base, id: 'p3-q1', chapterId: 'p3' })
+  assert.deepEqual(r.errors, [])
+})
+
 // ---------------- TS 渲染 ----------------
 test('单引号被转义', () => {
   assert.equal(quote("学生's"), "'学生\\'s'")

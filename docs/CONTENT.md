@@ -25,6 +25,7 @@ node scripts/validate-content.mjs
 |---|---|
 | id 唯一 | 复制粘贴出来的重复卡 |
 | `chapterId` 存在、`subjectId` 与章节一致 | 刷题时组到错误章节 |
+| **id 前缀与章节一致** | 不同章节撞用同一编号（人工编号必撞） |
 | 题型合法、`importance` 在 1..5 | 脏数据 |
 | 选择题：≥2 选项、无空选项、`answer` 不越界 | 判分永远错 |
 | 判断题：`answer` 是布尔、`back` 与之一致 | 写了「正确」却是 `false` |
@@ -114,6 +115,7 @@ node scripts/validate-content.mjs
 | 294 | 183 KB |
 | 355 | 190 KB |
 | 438 | 201 KB |
+| 468 | 207 KB |
 
 按这个斜率，扩到 1500 张时 bundle 约 600–700 KB（gzip 200 KB 出头），首屏仍可接受，
 但到 3000 张就该拆分了。届时两个方向：
