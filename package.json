@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "test": "node scripts/sync-merge.mjs && node scripts/quiz-core.mjs"
+    "test": "node scripts/validate-content.mjs && node scripts/sync-merge.mjs && node scripts/quiz-core.mjs"
   },
   "dependencies": {
     "dexie": "^4.4.7",
