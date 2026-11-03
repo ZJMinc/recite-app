@@ -17,6 +17,7 @@ export type IconName =
   | 'trash'
   | 'sparkle'
   | 'target'
+  | 'speaker'
 
 const PATHS: Record<IconName, ReactNode> = {
   today: (
@@ -84,6 +85,12 @@ const PATHS: Record<IconName, ReactNode> = {
       <circle cx="12" cy="12" r="9" />
       <circle cx="12" cy="12" r="5" />
       <circle cx="12" cy="12" r="1" />
+    </>
+  ),
+  speaker: (
+    <>
+      <path d="M4 9v6h4l5 4V5L8 9H4Z" />
+      <path d="M17 8.5a5 5 0 0 1 0 7M20 6a9 9 0 0 1 0 12" />
     </>
   ),
 }

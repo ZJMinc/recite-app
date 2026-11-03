@@ -9,6 +9,7 @@ import { ProgressBar, RatingBar } from '../components/ui'
 import { Icon } from '../components/Icon'
 import { CHAPTER_MAP, SUBJECT_MAP } from '../data/curriculum'
 import { formatDuration } from '../lib/stats'
+import { isSpeechSupported, speak, stopSpeaking } from '../lib/speech'
 
 const EXTRA_NEW = 10
 const MAX_REPEAT = 2
@@ -17,7 +18,7 @@ type Phase = 'loading' | 'reviewing' | 'empty' | 'done'
 
 export function Review() {
   const navigate = useNavigate()
-  const { dailyNewLimit, targetRetention } = useSettings()
+  const { dailyNewLimit, targetRetention, ttsEnabled } = useSettings()
 
   const [phase, setPhase] = useState<Phase>('loading')
   const [queue, setQueue] = useState<CardRecord[]>([])
@@ -80,6 +81,22 @@ export function Review() {
   useEffect(() => {
     void loadQueue()
   }, [loadQueue])
+
+  // 听背：卡片变化时自动读题；离开页面时停掉，避免后台继续念
+  const ttsOn = Boolean(ttsEnabled) && isSpeechSupported()
+  useEffect(() => {
+    if (!ttsOn || !current) return
+    speak(current.front || current.kp)
+    return () => stopSpeaking()
+  }, [ttsOn, current?.id])
+
+  const speakCard = useCallback(() => {
+    if (!current) return
+    const text = revealed
+      ? [current.front, current.back, current.analysis].filter(Boolean).join('。')
+      : current.front || current.kp
+    speak(text)
+  }, [current, revealed])
 
   const finish = useCallback(async () => {
     const seconds = (Date.now() - startedAt.current) / 1000
@@ -274,9 +291,21 @@ export function Review() {
         </span>
       </header>
 
-      <div className="px-4 pb-1 text-[11px] text-muted">
-        {subject?.title ?? ''}
-        {chapter ? ` · ${chapter.title}` : ''}
+      <div className="flex items-center justify-between px-4 pb-1 text-[11px] text-muted">
+        <span>
+          {subject?.title ?? ''}
+          {chapter ? ` · ${chapter.title}` : ''}
+        </span>
+        {ttsOn ? (
+          <button
+            type="button"
+            aria-label="朗读这张卡"
+            onClick={speakCard}
+            className="-mr-1 rounded-full p-1 text-muted hover:text-accent"
+          >
+            <Icon name="speaker" size={15} />
+          </button>
+        ) : null}
       </div>
 
       <div className="flex flex-1 flex-col overflow-y-auto px-4 pb-4 pt-2">

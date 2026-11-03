@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "test": "node scripts/validate-content.mjs && node scripts/sync-merge.mjs && node scripts/quiz-core.mjs && node scripts/recite-core.mjs && node scripts/plan-core.mjs",
+    "test": "node scripts/validate-content.mjs && node scripts/sync-merge.mjs && node scripts/quiz-core.mjs && node scripts/recite-core.mjs && node scripts/plan-core.mjs && node scripts/theme-speech.mjs",
     "content:check": "node scripts/validate-content.mjs",
     "content:import": "node scripts/import-content.mjs"
   },

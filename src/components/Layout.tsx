@@ -1,4 +1,7 @@
+import { useEffect } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { useSettings } from '../store/settings'
+import { applyTheme, systemPrefersDark, watchSystemTheme } from '../lib/theme'
 import { SyncRuntime } from '../sync'
 import { Icon, type IconName } from './Icon'
 
@@ -50,7 +53,20 @@ function BottomNav() {
   )
 }
 
+function useThemeEffect() {
+  const theme = useSettings((s) => s.theme)
+  useEffect(() => {
+    applyTheme(theme, systemPrefersDark())
+    // 跟随系统时，系统主题切换要立即生效
+    if (!theme || theme === 'auto') {
+      return watchSystemTheme((prefersDark) => applyTheme('auto', prefersDark))
+    }
+    return undefined
+  }, [theme])
+}
+
 export function Layout() {
+  useThemeEffect()
   const { pathname } = useLocation()
   const focusMode = pathname.startsWith('/review')
 

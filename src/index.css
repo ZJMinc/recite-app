@@ -47,6 +47,38 @@
   }
 }
 
+/* 暗色主题：只覆盖颜色变量，所有 bg- 与 text- 工具类自动跟随。
+   用 html[...] 提高特异度，避免与 @theme 生成的 :root 打平。 */
+html[data-theme='dark'] {
+  --color-paper: #14161a;
+  --color-surface: #1c1f24;
+  --color-ink: #e9e6e0;
+  --color-ink-soft: #c3beb5;
+  --color-muted: #918b81;
+  --color-line: #2e333a;
+  --color-accent: #57a58b;
+  --color-accent-ink: #d8ece4;
+  --color-accent-soft: #1d3a32;
+  --color-gold: #d5a763;
+  --color-gold-soft: #322811;
+  --color-rose: #d98b7b;
+  --color-rose-soft: #3a2421;
+  --color-sky: #8fb8da;
+  --color-sky-soft: #1c2a36;
+  color-scheme: dark;
+}
+
+[data-theme='dark'] .cloze-blank {
+  background: #2b3037;
+  box-shadow: inset 0 -2px 0 #3b424b;
+}
+
+[data-theme='dark'] .cloze-answer {
+  background: #43391b;
+  box-shadow: inset 0 -2px 0 #5b4d25;
+  color: #f3e8c9;
+}
+
 /* 挖空：未揭晓时用同宽透明字占位，揭晓后高亮 */
 .cloze-blank {
   color: transparent;

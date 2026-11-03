@@ -5,6 +5,8 @@ import { useSettings } from '../store/settings'
 import { Icon } from '../components/Icon'
 import { SEED_CARDS } from '../data/seed'
 import { clearConfig, loadConfig, saveConfig, syncNow } from '../sync'
+import { THEME_OPTIONS } from '../lib/theme'
+import { isSpeechSupported } from '../lib/speech'
 
 // 自建后端的默认值，仅用于预填输入框。放在 .env.local（已 gitignore）里，
 // 避免把个人地址写进公开仓库；没有配置时留空，用户在界面上填。
@@ -231,6 +233,64 @@ export function Settings() {
               onClick={() => setConfirming(true)}
             />
           )}
+        </div>
+      </section>
+
+      {/* 外观与听背 */}
+      <section className="rounded-2xl border border-line/70 bg-surface">
+        <SectionTitle title="外观" />
+        <div className="px-4 pb-4">
+          <div className="flex gap-1.5">
+            {THEME_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => settings.update({ theme: opt.value })}
+                className={[
+                  'flex-1 rounded-xl border px-1 py-2 text-[11.5px] transition-colors',
+                  (settings.theme ?? 'auto') === opt.value
+                    ? 'border-accent bg-accent-soft text-accent-ink'
+                    : 'border-line text-muted',
+                ].join(' ')}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-3.5 flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-[13.5px] text-ink">听背（朗读卡片）</p>
+              <p className="mt-0.5 text-[11px] leading-snug text-muted">
+                {isSpeechSupported()
+                  ? '进入新卡时自动读题，通勤时可以不看屏幕'
+                  : '当前浏览器不支持语音合成，此开关无效'}
+              </p>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={Boolean(settings.ttsEnabled) && isSpeechSupported()}
+              disabled={!isSpeechSupported()}
+              onClick={() => settings.update({ ttsEnabled: !settings.ttsEnabled })}
+              className={[
+                'relative h-6 w-11 shrink-0 rounded-full transition-colors',
+                Boolean(settings.ttsEnabled) && isSpeechSupported()
+                  ? 'bg-accent'
+                  : 'bg-line',
+                isSpeechSupported() ? '' : 'opacity-40',
+              ].join(' ')}
+            >
+              <span
+                className={[
+                  'absolute top-0.5 h-5 w-5 rounded-full bg-surface transition-[left]',
+                  Boolean(settings.ttsEnabled) && isSpeechSupported()
+                    ? 'left-[22px]'
+                    : 'left-0.5',
+                ].join(' ')}
+              />
+            </button>
+          </div>
         </div>
       </section>
 

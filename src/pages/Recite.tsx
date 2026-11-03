@@ -14,6 +14,7 @@ import {
   type CoverageResult,
 } from '../lib/recite-core'
 import type { CardRecord } from '../types'
+import { isSpeechSupported, speak, stopSpeaking } from '../lib/speech'
 
 type Phase = 'loading' | 'running' | 'empty' | 'done'
 
@@ -29,7 +30,7 @@ const RATING_LABEL: Record<RatingKey, string> = {
 export function Recite() {
   const navigate = useNavigate()
   const [params] = useSearchParams()
-  const { targetRetention } = useSettings()
+  const { targetRetention, ttsEnabled } = useSettings()
 
   const chapterId = params.get('chapter') ?? undefined
   const sizeParam = Number(params.get('size') ?? '')
@@ -69,6 +70,14 @@ export function Recite() {
       alive = false
     }
   }, [chapterId, size])
+
+  const ttsOn = Boolean(ttsEnabled) && isSpeechSupported()
+
+  useEffect(() => {
+    if (!ttsOn || !current) return
+    speak(current.front || current.kp)
+    return () => stopSpeaking()
+  }, [ttsOn, current?.id])
 
   const submit = useCallback(() => {
     if (!current || result) return
@@ -246,7 +255,19 @@ export function Recite() {
 
       <div className="flex flex-1 flex-col gap-3 overflow-y-auto px-4 pb-4 pt-2">
         <div className="rounded-[22px] border border-line/80 bg-surface px-5 py-4">
-          <p className="text-[11px] text-muted">默写题目 · {current.kp}</p>
+          <div className="flex items-center justify-between">
+            <p className="text-[11px] text-muted">默写题目 · {current.kp}</p>
+            {ttsOn ? (
+              <button
+                type="button"
+                aria-label="朗读题目"
+                onClick={() => speak(current.front || current.kp)}
+                className="-mr-1 rounded-full p-1 text-muted hover:text-accent"
+              >
+                <Icon name="speaker" size={15} />
+              </button>
+            ) : null}
+          </div>
           <p className="mt-1.5 text-[17px] font-medium leading-snug text-ink">
             {current.front}
           </p>

@@ -77,13 +77,21 @@ export interface DailyRecord {
   seconds: number
 }
 
+export type ThemeMode = 'auto' | 'light' | 'dark'
+
 export interface Settings {
   dailyNewLimit: number
   targetRetention: number
   examDate?: string
+  /** 外观：跟随系统 / 强制浅色 / 强制深色 */
+  theme?: ThemeMode
+  /** 听背：卡片上显示朗读按钮并自动读题 */
+  ttsEnabled?: boolean
 }
 
 export const DEFAULT_SETTINGS: Settings = {
   dailyNewLimit: 20,
   targetRetention: 0.9,
+  theme: 'auto',
+  ttsEnabled: false,
 }
