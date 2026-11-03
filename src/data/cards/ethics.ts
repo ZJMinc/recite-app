@@ -510,4 +510,15 @@ export const CARDS: SeedCard[] = [
     analysis: '十项准则中没有「追求升学率」，反而在「潜心教书育人」中强调不以分数为唯一标准。',
     importance: 4,
   },
+  {
+    id: 'm1-q11',
+    subjectId: 'ethics',
+    chapterId: 'm1',
+    kp: '师德的内在动力',
+    type: 'qa',
+    front: '教师践行师德的内在动力来自哪里？',
+    back: '① 职业认同与教育情怀\n② 对学生的爱与责任感\n③ 自我价值的实现需要\n④ 专业发展的追求\n⑤ 学校文化与制度激励\n⑥ 社会尊重与支持',
+    analysis: '只靠外部约束的师德难以持久，内在认同才是根本。',
+    importance: 4,
+  },
 ]

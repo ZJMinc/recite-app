@@ -515,4 +515,15 @@ export const CARDS: SeedCard[] = [
     analysis: '双减的关键不在「减法」，而在校内质量的「加法」。',
     importance: 5,
   },
+  {
+    id: 'c1-q10',
+    subjectId: 'newcur',
+    chapterId: 'c1',
+    kp: '新课改的学生观',
+    type: 'qa',
+    front: '新课改倡导的学生观与旧观念有何不同？',
+    back: '① 从「知识容器」到「主动建构者」\n② 从「统一规格」到「尊重差异」\n③ 从「被动接受」到「主动探究」\n④ 从「教师权威」到「平等对话」\n⑤ 从「分数评价」到「多元发展」',
+    analysis: '学生观的转变是新课程改革的深层变革。',
+    importance: 4,
+  },
 ]
