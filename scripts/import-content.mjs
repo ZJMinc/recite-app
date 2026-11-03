@@ -83,7 +83,7 @@ if (errors.length > 0) {
 const block = accepted.map(renderCard).join('\n')
 
 if (!write) {
-  console.log('\n（dry-run）将追加以下内容到 src/data/seed.ts:\n')
+  console.log('\n（dry-run）将按科目追加到 src/data/cards/<科目>.ts:\n')
   console.log(block)
   console.log('\n确认无误后加 --write 真正写入。')
   process.exit(0)
