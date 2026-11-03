@@ -123,7 +123,18 @@ export function renderCard(card) {
   return lines.join('\n')
 }
 
-/** 用单引号包裹字符串，内部单引号与反斜杠转义 */
+/**
+ * 用单引号包裹字符串。
+ * 必须把换行/回车/制表转成转义序列：qa 卡的多行答案是真实换行符，
+ * 直接塞进单引号字符串会把 TS 源码写坏（曾因此产出无法解析的 seed.ts）。
+ */
 export function quote(text) {
-  return `'${String(text).replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`
+  const escaped = String(text)
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/\r\n/g, '\\n')
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\n')
+    .replace(/\t/g, '\\t')
+  return `'${escaped}'`
 }
